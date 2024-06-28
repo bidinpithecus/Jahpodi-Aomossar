@@ -1,5 +1,5 @@
 use crate::schema::user;
-use chrono::NaiveDate;
+use chrono::NaiveDateTime;
 use diesel::prelude::*;
 
 #[derive(serde::Serialize, Selectable, Queryable)]
@@ -9,7 +9,7 @@ pub struct User {
     pub id: i32,
     pub username: String,
     pub email: String,
-    pub creation_date: NaiveDate,
+    pub creation_time: NaiveDateTime,
     pub password: String,
 }
 

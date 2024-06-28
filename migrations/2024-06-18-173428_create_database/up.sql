@@ -1,28 +1,28 @@
 CREATE TABLE "user" (
-    "id" INT PRIMARY KEY,
-    "username" VARCHAR(50) NOT NULL,
-    "email" VARCHAR(100) NOT NULL,
-    "creation_date" DATE NOT NULL,
+    "id" SERIAL PRIMARY KEY,
+    "username" VARCHAR(50) UNIQUE NOT NULL,
+    "email" VARCHAR(100) UNIQUE NOT NULL,
+    "creation_time" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "password" VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE "admin" (
-    "id" INT PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     FOREIGN KEY ("id") REFERENCES "user"("id")
 );
 
 CREATE TABLE "regular_user" (
-    "id" INT PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     FOREIGN KEY ("id") REFERENCES "user"("id")
 );
 
 CREATE TABLE "ingredient" (
-    "id" INT PRIMARY KEY,
-    "name" VARCHAR(100)
+    "id" SERIAL PRIMARY KEY,
+    "name" VARCHAR(100) UNIQUE
 );
 
 CREATE TABLE "recipe" (
-    "id" INT PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     "title" VARCHAR(100) NOT NULL,
     "description" TEXT NOT NULL,
     "creation_date" DATE NOT NULL,
@@ -30,23 +30,23 @@ CREATE TABLE "recipe" (
 );
 
 CREATE TABLE "ingredient_request" (
-    "id" INT PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     "name" VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE "question" (
-    "id" INT PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     "title" VARCHAR(200) NOT NULL ,
     "body" TEXT NOT NULL,
-    "date" DATE NOT NULL,
+    "date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_id" INT,
     FOREIGN KEY ("user_id") REFERENCES "regular_user"("id")
 );
 
 CREATE TABLE "answer" (
-    "id" INT PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     "body" TEXT NOT NULL,
-    "date" DATE NOT NULL,
+    "date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "question_id" INT,
     "user_id" INT,
     FOREIGN KEY ("question_id") REFERENCES "question"("id"),
@@ -54,7 +54,7 @@ CREATE TABLE "answer" (
 );
 
 CREATE TABLE "rating" (
-    "id" INT PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     "score" INT NOT NULL,
     "recipe_id" INT,
     "user_id" INT,

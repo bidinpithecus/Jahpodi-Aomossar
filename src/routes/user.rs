@@ -9,6 +9,7 @@ pub async fn create_user(
     State(pool): State<Pool>,
     Json(new_user): Json<NewUser>,
 ) -> Result<Json<User>, (StatusCode, String)> {
+    println!("create_user called");
     let conn = pool.get().await.map_err(internal_error)?;
     let res = conn
         .interact(|conn| {
@@ -24,6 +25,7 @@ pub async fn create_user(
 }
 
 pub async fn list_users(State(pool): State<Pool>) -> Result<Json<Vec<User>>, (StatusCode, String)> {
+    println!("list_users called");
     let conn = pool.get().await.map_err(internal_error)?;
     let res = conn
         .interact(|conn| user::table.select(User::as_select()).load(conn))

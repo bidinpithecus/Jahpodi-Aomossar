@@ -10,7 +10,7 @@ diesel::table! {
     answer (id) {
         id -> Int4,
         body -> Text,
-        date -> Date,
+        date -> Timestamp,
         question_id -> Nullable<Int4>,
         user_id -> Nullable<Int4>,
     }
@@ -38,7 +38,7 @@ diesel::table! {
         #[max_length = 200]
         title -> Varchar,
         body -> Text,
-        date -> Date,
+        date -> Timestamp,
         user_id -> Nullable<Int4>,
     }
 }
@@ -99,7 +99,7 @@ diesel::table! {
         username -> Varchar,
         #[max_length = 100]
         email -> Varchar,
-        creation_date -> Date,
+        creation_time -> Timestamp,
         #[max_length = 100]
         password -> Varchar,
     }
