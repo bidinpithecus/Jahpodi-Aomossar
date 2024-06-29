@@ -1,5 +1,5 @@
-use crate::db::user::{NewUser, User};
-use crate::schema::user;
+use crate::db::ingredient::{Ingredient, NewIngredient};
+use crate::schema::ingredient;
 use crate::utils::internal_error;
 use axum::{
     extract::{Path, State},
@@ -9,16 +9,16 @@ use axum::{
 use deadpool_diesel::postgres::Pool;
 use diesel::prelude::*;
 
-pub async fn create_user(
+pub async fn create_ingredient(
     State(pool): State<Pool>,
-    Json(new_user): Json<NewUser>,
-) -> Result<Json<User>, (StatusCode, String)> {
+    Json(new_ingredient): Json<NewIngredient>,
+) -> Result<Json<Ingredient>, (StatusCode, String)> {
     let conn = pool.get().await.map_err(internal_error)?;
     let res = conn
         .interact(|conn| {
-            diesel::insert_into(user::table)
-                .values(new_user)
-                .returning(User::as_returning())
+            diesel::insert_into(ingredient::table)
+                .values(new_ingredient)
+                .returning(Ingredient::as_returning())
                 .get_result(conn)
         })
         .await
@@ -27,24 +27,30 @@ pub async fn create_user(
     Ok(Json(res))
 }
 
-pub async fn list_users(State(pool): State<Pool>) -> Result<Json<Vec<User>>, (StatusCode, String)> {
+pub async fn list_ingredients(
+    State(pool): State<Pool>,
+) -> Result<Json<Vec<Ingredient>>, (StatusCode, String)> {
     let conn = pool.get().await.map_err(internal_error)?;
     let res = conn
-        .interact(|conn| user::table.select(User::as_select()).load(conn))
+        .interact(|conn| ingredient::table.select(Ingredient::as_select()).load(conn))
         .await
         .map_err(internal_error)?
         .map_err(internal_error)?;
     Ok(Json(res))
 }
 
-pub async fn get_user(
+pub async fn get_ingredient(
     State(pool): State<Pool>,
     Path(id): Path<i32>,
-) -> Result<Json<User>, (StatusCode, String)> {
+) -> Result<Json<Ingredient>, (StatusCode, String)> {
     let conn = pool.get().await.map_err(internal_error)?;
 
     let user = conn
-        .interact(move |conn| user::table.filter(user::id.eq(id)).first::<User>(conn))
+        .interact(move |conn| {
+            ingredient::table
+                .filter(ingredient::id.eq(id))
+                .first::<Ingredient>(conn)
+        })
         .await
         .map_err(internal_error)?
         .map_err(|_| (StatusCode::NOT_FOUND, "User not found".to_string()))?;

@@ -1,3 +1,5 @@
+pub mod ingredient_request;
+pub mod ingredient;
 pub mod user;
 
 use deadpool_diesel::postgres::{Manager, Pool};

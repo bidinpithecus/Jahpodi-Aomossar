@@ -8,7 +8,9 @@ use axum::{
     Router,
 };
 use db::init_db;
-use routes::user::{create_user, list_users};
+use routes::ingredient::{create_ingredient, get_ingredient, list_ingredients};
+use routes::ingredient_request::{create_ingredient_request, get_ingredient_request, list_ingredient_requests};
+use routes::user::{create_user, get_user, list_users};
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -25,8 +27,15 @@ async fn main() {
     let db_pool = init_db().await;
 
     let app = Router::new()
-        .route("/user/list", get(list_users))
-        .route("/user/create", post(create_user))
+        .route("/user", get(list_users))
+        .route("/user/:id", get(get_user))
+        .route("/user", post(create_user))
+        .route("/ingredient", get(list_ingredients))
+        .route("/ingredient/:id", get(get_ingredient))
+        .route("/ingredient", post(create_ingredient))
+        .route("/ingredient-request", get(list_ingredient_requests))
+        .route("/ingredient-request/:id", get(get_ingredient_request))
+        .route("/ingredient-request", post(create_ingredient_request))
         .with_state(db_pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
