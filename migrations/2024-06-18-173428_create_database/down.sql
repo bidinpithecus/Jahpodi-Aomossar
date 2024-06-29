@@ -18,10 +18,6 @@ DROP TABLE "rating" CASCADE;
 
 DROP TABLE "recipe_ingredient" CASCADE;
 
-DROP TABLE "recipe_author" CASCADE;
-
-DROP TABLE "user_recipe" CASCADE;
-
 DROP TABLE "user_question" CASCADE;
 
 DROP TABLE "user_ingredient_request" CASCADE;

@@ -11,8 +11,8 @@ diesel::table! {
         id -> Int4,
         body -> Text,
         date -> Timestamp,
-        question_id -> Nullable<Int4>,
-        user_id -> Nullable<Int4>,
+        question_id -> Int4,
+        user_id -> Int4,
     }
 }
 
@@ -20,7 +20,7 @@ diesel::table! {
     ingredient (id) {
         id -> Int4,
         #[max_length = 100]
-        name -> Nullable<Varchar>,
+        name -> Varchar,
     }
 }
 
@@ -39,7 +39,7 @@ diesel::table! {
         title -> Varchar,
         body -> Text,
         date -> Timestamp,
-        user_id -> Nullable<Int4>,
+        user_id -> Int4,
     }
 }
 
@@ -54,8 +54,8 @@ diesel::table! {
     rating (id) {
         id -> Int4,
         score -> Int4,
-        recipe_id -> Nullable<Int4>,
-        user_id -> Nullable<Int4>,
+        recipe_id -> Int4,
+        user_id -> Int4,
     }
 }
 
@@ -67,13 +67,7 @@ diesel::table! {
         description -> Text,
         creation_date -> Date,
         directions -> Text,
-    }
-}
-
-diesel::table! {
-    recipe_author (user_id, recipe_id) {
         user_id -> Int4,
-        recipe_id -> Int4,
     }
 }
 
@@ -119,13 +113,6 @@ diesel::table! {
     }
 }
 
-diesel::table! {
-    user_recipe (user_id, recipe_id) {
-        user_id -> Int4,
-        recipe_id -> Int4,
-    }
-}
-
 diesel::joinable!(admin -> user (id));
 diesel::joinable!(answer -> question (question_id));
 diesel::joinable!(answer -> regular_user (user_id));
@@ -134,8 +121,7 @@ diesel::joinable!(question_answer -> answer (answer_id));
 diesel::joinable!(question_answer -> question (question_id));
 diesel::joinable!(rating -> recipe (recipe_id));
 diesel::joinable!(rating -> regular_user (user_id));
-diesel::joinable!(recipe_author -> recipe (recipe_id));
-diesel::joinable!(recipe_author -> regular_user (user_id));
+diesel::joinable!(recipe -> regular_user (user_id));
 diesel::joinable!(recipe_ingredient -> ingredient (ingredient_id));
 diesel::joinable!(recipe_ingredient -> recipe (recipe_id));
 diesel::joinable!(regular_user -> user (id));
@@ -143,8 +129,6 @@ diesel::joinable!(user_ingredient_request -> ingredient_request (request_id));
 diesel::joinable!(user_ingredient_request -> regular_user (user_id));
 diesel::joinable!(user_question -> question (question_id));
 diesel::joinable!(user_question -> regular_user (user_id));
-diesel::joinable!(user_recipe -> recipe (recipe_id));
-diesel::joinable!(user_recipe -> regular_user (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     admin,
@@ -155,11 +139,9 @@ diesel::allow_tables_to_appear_in_same_query!(
     question_answer,
     rating,
     recipe,
-    recipe_author,
     recipe_ingredient,
     regular_user,
     user,
     user_ingredient_request,
     user_question,
-    user_recipe,
 );
