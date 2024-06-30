@@ -1,10 +1,12 @@
-use crate::db::user::{AuthUser, NewUser, User, UserWithoutPassword};
+use super::protected_routes::Claims;
+use crate::db::user::{AuthUser, NewUser, User};
 use crate::schema::user;
 use crate::utils::internal_error;
 use axum::{extract::State, http::StatusCode, response::Json};
 use bcrypt::{hash, verify};
 use deadpool_diesel::postgres::Pool;
 use diesel::prelude::*;
+use jsonwebtoken::{encode, EncodingKey, Header};
 
 pub async fn register(
     State(pool): State<Pool>,
@@ -36,7 +38,7 @@ pub async fn register(
 pub async fn sign_in(
     State(pool): State<Pool>,
     Json(auth_user): Json<AuthUser>,
-) -> Result<Json<UserWithoutPassword>, (StatusCode, String)> {
+) -> Result<Json<String>, (StatusCode, String)> {
     let conn = pool.get().await.map_err(internal_error)?;
 
     let stored_user = conn
@@ -68,10 +70,22 @@ pub async fn sign_in(
         ));
     }
 
-    Ok(Json(UserWithoutPassword {
-        id: stored_user.id,
-        username: stored_user.username,
-        email: stored_user.email,
-        creation_time: stored_user.creation_time,
-    }))
+    let claims = Claims::new(
+        stored_user.id,
+        (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
+    );
+
+    let token = encode(
+        &Header::default(),
+        &claims,
+        &EncodingKey::from_secret("your_secret_key".as_ref()),
+    )
+    .map_err(|_| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Token creation failed".to_string(),
+        )
+    })?;
+
+    Ok(Json(token))
 }
