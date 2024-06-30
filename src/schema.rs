@@ -65,7 +65,7 @@ diesel::table! {
         #[max_length = 100]
         title -> Varchar,
         description -> Text,
-        creation_date -> Date,
+        creation_date -> Timestamp,
         directions -> Text,
         user_id -> Int4,
     }

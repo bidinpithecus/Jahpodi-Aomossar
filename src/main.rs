@@ -8,9 +8,12 @@ use axum::{
     Router,
 };
 use db::init_db;
-use routes::ingredient::{create_ingredient, get_ingredient, list_ingredients};
-use routes::ingredient_request::{create_ingredient_request, get_ingredient_request, list_ingredient_requests};
-use routes::user::{create_user, get_user, list_users};
+use routes::ingredient_request::{create_ingredient_request, list_ingredient_requests};
+use routes::user::{register, sign_in};
+use routes::{
+    ingredient::{create_ingredient, list_ingredients},
+    recipe::{create_recipe, get_recipe, get_recipes_by_user_id, list_recipes},
+};
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -27,15 +30,16 @@ async fn main() {
     let db_pool = init_db().await;
 
     let app = Router::new()
-        .route("/user", get(list_users))
-        .route("/user/:id", get(get_user))
-        .route("/user", post(create_user))
-        .route("/ingredient", get(list_ingredients))
-        .route("/ingredient/:id", get(get_ingredient))
+        .route("/register", post(register))
+        .route("/login", get(sign_in))
         .route("/ingredient", post(create_ingredient))
-        .route("/ingredient-request", get(list_ingredient_requests))
-        .route("/ingredient-request/:id", get(get_ingredient_request))
+        .route("/ingredients", get(list_ingredients))
         .route("/ingredient-request", post(create_ingredient_request))
+        .route("/ingredient-requests", get(list_ingredient_requests))
+        .route("/recipe", post(create_recipe))
+        .route("/recipes", get(list_recipes))
+        .route("/recipe/:id", get(get_recipe))
+        .route("/recipes-from/:id", get(get_recipes_by_user_id))
         .with_state(db_pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));

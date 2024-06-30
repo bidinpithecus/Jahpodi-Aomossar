@@ -25,7 +25,7 @@ CREATE TABLE "recipe" (
     "id" SERIAL PRIMARY KEY,
     "title" VARCHAR(100) NOT NULL,
     "description" TEXT NOT NULL,
-    "creation_date" DATE NOT NULL,
+    "creation_date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "directions" TEXT NOT NULL,
     "user_id" INT NOT NULL,
 

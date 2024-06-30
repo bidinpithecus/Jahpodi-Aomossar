@@ -2,7 +2,7 @@ use crate::db::ingredient_request::{IngredientRequest, NewIngredientRequest};
 use crate::schema::ingredient_request;
 use crate::utils::internal_error;
 use axum::{
-    extract::{Path, State},
+    extract::State,
     http::StatusCode,
     response::Json,
 };
@@ -37,23 +37,4 @@ pub async fn list_ingredient_requests(
         .map_err(internal_error)?
         .map_err(internal_error)?;
     Ok(Json(res))
-}
-
-pub async fn get_ingredient_request(
-    State(pool): State<Pool>,
-    Path(id): Path<i32>,
-) -> Result<Json<IngredientRequest>, (StatusCode, String)> {
-    let conn = pool.get().await.map_err(internal_error)?;
-
-    let user = conn
-        .interact(move |conn| {
-            ingredient_request::table
-                .filter(ingredient_request::id.eq(id))
-                .first::<IngredientRequest>(conn)
-        })
-        .await
-        .map_err(internal_error)?
-        .map_err(|_| (StatusCode::NOT_FOUND, "User not found".to_string()))?;
-
-    Ok(Json(user))
 }
