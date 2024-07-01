@@ -1,7 +1,7 @@
 use crate::schema::ingredient;
 use diesel::prelude::*;
 
-#[derive(serde::Serialize, Selectable, Queryable)]
+#[derive(serde::Serialize, serde::Deserialize, Selectable, Queryable)]
 #[diesel(table_name = ingredient)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Ingredient {
@@ -13,4 +13,10 @@ pub struct Ingredient {
 #[diesel(table_name = ingredient)]
 pub struct NewIngredient {
     pub name: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct IngredientWithQuantity {
+    pub name: String,
+    pub quantity: String,
 }

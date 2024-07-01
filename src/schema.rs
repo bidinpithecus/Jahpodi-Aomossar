@@ -45,13 +45,6 @@ diesel::table! {
 }
 
 diesel::table! {
-    question_answer (question_id, answer_id) {
-        question_id -> Int4,
-        answer_id -> Int4,
-    }
-}
-
-diesel::table! {
     rating (recipe_id, user_id) {
         score -> Int4,
         recipe_id -> Int4,
@@ -104,8 +97,6 @@ diesel::joinable!(answer -> question (question_id));
 diesel::joinable!(answer -> regular_user (user_id));
 diesel::joinable!(question -> recipe (recipe_id));
 diesel::joinable!(question -> regular_user (user_id));
-diesel::joinable!(question_answer -> answer (answer_id));
-diesel::joinable!(question_answer -> question (question_id));
 diesel::joinable!(rating -> recipe (recipe_id));
 diesel::joinable!(rating -> regular_user (user_id));
 diesel::joinable!(recipe -> regular_user (user_id));
@@ -119,7 +110,6 @@ diesel::allow_tables_to_appear_in_same_query!(
     ingredient,
     ingredient_request,
     question,
-    question_answer,
     rating,
     recipe,
     recipe_ingredient,

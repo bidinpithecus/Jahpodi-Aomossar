@@ -1,8 +1,8 @@
-use crate::schema::user;
+use crate::schema::{user, regular_user, admin};
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 
-#[derive(serde::Serialize, Selectable, Queryable, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Selectable, Queryable, Clone)]
 #[diesel(table_name = user)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct User {
@@ -38,4 +38,18 @@ pub struct UserWithoutPassword {
     pub username: String,
     pub email: String,
     pub creation_time: NaiveDateTime,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Selectable, Queryable, Insertable)]
+#[diesel(table_name = regular_user)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct RegularUser {
+    pub id: i32,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Selectable, Queryable, Insertable)]
+#[diesel(table_name = admin)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct Admin {
+    pub id: i32,
 }

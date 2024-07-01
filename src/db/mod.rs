@@ -1,7 +1,11 @@
-pub mod recipe;
-pub mod ingredient_request;
+pub mod answer;
 pub mod ingredient;
+pub mod ingredient_request;
+pub mod question;
+pub mod recipe;
 pub mod user;
+pub mod ingredient_for_recipes;
+pub mod rating;
 
 use deadpool_diesel::postgres::{Manager, Pool};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};

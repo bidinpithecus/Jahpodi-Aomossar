@@ -1,6 +1,6 @@
 use super::protected_routes::Claims;
-use crate::db::user::{AuthUser, NewUser, User};
-use crate::schema::user;
+use crate::db::user::{AuthUser, NewUser, RegularUser, User};
+use crate::schema::{regular_user, user};
 use crate::utils::internal_error;
 use axum::{extract::State, http::StatusCode, response::Json};
 use bcrypt::{hash, verify};
@@ -22,7 +22,7 @@ pub async fn register(
     new_user.password = password_hash;
 
     let conn = pool.get().await.map_err(internal_error)?;
-    let res: User = conn
+    let user: User = conn
         .interact(move |conn| {
             diesel::insert_into(user::table)
                 .values(&new_user)
@@ -32,7 +32,21 @@ pub async fn register(
         .map_err(internal_error)?
         .map_err(internal_error)?;
 
-    Ok(Json(res.id))
+    let conn = pool.get().await.map_err(internal_error)?;
+    let reg_user: RegularUser = conn
+        .interact(move |conn| {
+            diesel::insert_into(regular_user::table)
+                .values(RegularUser {
+                    id: user.id
+                })
+                .get_result(conn)
+        })
+        .await
+        .map_err(internal_error)?
+        .map_err(internal_error)?;
+
+
+    Ok(Json(reg_user.id))
 }
 
 pub async fn sign_in(

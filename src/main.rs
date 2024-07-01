@@ -3,18 +3,26 @@ mod routes;
 mod schema;
 mod utils;
 
+use crate::routes::answer::answer_question;
+use crate::routes::recipe::get_full_recipe;
 use axum::{
     routing::{get, post},
     Router,
 };
 use db::init_db;
-use routes::ingredient_request::{create_ingredient_request, list_ingredient_requests};
-use routes::protected_routes::require_auth;
-use routes::user::{register, sign_in};
+use routes::{
+    answer::get_answers_by_question_id,
+    user::{register, sign_in},
+};
 use routes::{
     ingredient::{create_ingredient, list_ingredients},
     recipe::{create_recipe, get_recipe, get_recipes_by_user_id, list_recipes},
 };
+use routes::{
+    ingredient_request::{create_ingredient_request, list_ingredient_requests},
+    question::ask_question,
+};
+use routes::{protected_routes::require_auth, question::get_questions_by_recipe_id};
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -40,7 +48,18 @@ async fn main() {
         )
         .route("/recipes", get(list_recipes))
         .route("/recipe/:id", get(get_recipe))
+        .route("/full-recipe/:id", get(get_full_recipe))
         .route("/recipes-from/:id", get(get_recipes_by_user_id))
+        .route(
+            "/question",
+            post(ask_question).layer(axum::middleware::from_fn(require_auth)),
+        )
+        .route("/questions", get(get_questions_by_recipe_id))
+        .route(
+            "/answer",
+            post(answer_question).layer(axum::middleware::from_fn(require_auth)),
+        )
+        .route("/answers-for/:id", get(get_answers_by_question_id))
         .with_state(db_pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
