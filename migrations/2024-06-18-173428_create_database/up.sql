@@ -43,7 +43,9 @@ CREATE TABLE "question" (
     "body" TEXT NOT NULL,
     "date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_id" INT NOT NULL,
+    "recipe_id" INT NOT NULL,
 
+    FOREIGN KEY ("recipe_id") REFERENCES "recipe"("id"),
     FOREIGN KEY ("user_id") REFERENCES "regular_user"("id")
 );
 
@@ -59,11 +61,11 @@ CREATE TABLE "answer" (
 );
 
 CREATE TABLE "rating" (
-    "id" SERIAL PRIMARY KEY,
     "score" INT NOT NULL,
     "recipe_id" INT NOT NULL,
     "user_id" INT NOT NULL,
 
+    PRIMARY KEY ("recipe_id", "user_id"),
     FOREIGN KEY ("recipe_id") REFERENCES "recipe"("id"),
     FOREIGN KEY ("user_id") REFERENCES "regular_user"("id")
 );
@@ -76,30 +78,4 @@ CREATE TABLE "recipe_ingredient" (
     PRIMARY KEY ("ingredient_id", "recipe_id"),
     FOREIGN KEY ("ingredient_id") REFERENCES "ingredient"("id"),
     FOREIGN KEY ("recipe_id") REFERENCES "recipe"("id")
-);
-
-CREATE TABLE "user_question" (
-    "user_id" INT NOT NULL,
-    "question_id" INT NOT NULL,
-
-    PRIMARY KEY ("user_id", "question_id"),
-    FOREIGN KEY ("user_id") REFERENCES "regular_user"("id"),
-    FOREIGN KEY ("question_id") REFERENCES "question"("id")
-);
-
-CREATE TABLE "user_ingredient_request" (
-    "user_id" INT NOT NULL,
-    "request_id" INT NOT NULL,
-
-    PRIMARY KEY ("user_id", "request_id"),
-    FOREIGN KEY ("user_id") REFERENCES "regular_user"("id"),
-    FOREIGN KEY ("request_id") REFERENCES "ingredient_request"("id")
-);
-
-CREATE TABLE "question_answer" (
-    "question_id" INT NOT NULL,
-    "answer_id" INT NOT NULL,
-    PRIMARY KEY ("question_id", "answer_id"),
-    FOREIGN KEY ("question_id") REFERENCES "question"("id"),
-    FOREIGN KEY ("answer_id") REFERENCES "answer"("id")
 );
