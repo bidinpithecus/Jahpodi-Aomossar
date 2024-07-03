@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', Roboto, monospace;
+            background-color: #282c3d;
+            background-position: center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .dark-gray-button {
+            background-color: #1d1d1d;
+            /* Cinza escuro */
+            color: white;
+            /* Cor do texto */
+            border: none;
+            /* Remove a borda padrão */
+            padding: 10px 50px;
+            /* Adiciona um pouco de preenchimento */
+            text-align: center;
+            /* Alinha o texto ao centro */
+            text-decoration: none;
+            /* Remove a decoração do texto */
+            display: inline-block;
+            /* Define o elemento como inline-block */
+            font-size: 26px;
+            /* Define o tamanho da fonte */
+            margin: 4px 5px;
+            /* Adiciona uma margem */
+            cursor: pointer;
+            /* Adiciona o cursor pointer */
+            border-radius: 4px;
+            /* Adiciona bordas arredondadas */
+        }
+
+        .small-dark-gray-button {
+            background-color: #1d1d1d;
+            /* Cinza escuro */
+            color: #aaff88;
+            /* Cor do texto */
+            border: none;
+            /* Remove a borda padrão */
+            /* Adiciona um pouco de preenchimento */
+            text-align: left;
+            /* Alinha o texto ao centro */
+            text-decoration: none;
+            /* Remove a decoração do texto */
+            /* Define o elemento como inline-block */
+            font-size: 20px;
+            /* Define o tamanho da fonte */
+            margin: 0px 0px;
+            /* Adiciona uma margem */
+            cursor: pointer;
+            /* Adiciona o cursor pointer */
+            border-radius: 4px;
+            /* Adiciona bordas arredondadas */
+        }
+
+        .small-dark-gray-button:hover {
+            background-color: #555;
+            /* Muda a cor de fundo para um tom mais claro quando o botão é hover */
+        }
+
+        .dark-gray-button:hover {
+            background-color: #555;
+            /* Muda a cor de fundo para um tom mais claro quando o botão é hover */
+        }
+
+        .form-container {
+            background-color: #1d1d1d;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-container label {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            /* Alinha verticalmente com o texto */
+        }
+
+        .form-container button {
+            margin-left: 5px;
+            /* Adiciona um espaço à esquerda do botão */
+        }
+
+        .w3-modal-content {
+            background-color: #1d1d1d;
+            color: white;
+        }
+        </style>
+</head>
+
+<body>
+        <script>
+            function showTerms() {
+                document.getElementById('termsModal').style.display = 'block';
+            }
+    
+            function submitForm() {
+                // Get form data
+                const form = document.getElementById('registrationForm');
+                const formData = new FormData(form);
+    
+                // Convert FormData to JSON object
+                const json = {};
+                formData.forEach((value, key) => {
+                    json[key] = value;
+                });
+    
+                // Send JSON data to the server
+                fetch('localhost:3000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(json),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle response from server if needed
+                        console.log('Registration successful:', data);
+                        // Optionally redirect or show a success message
+                    })
+                    .catch(error => {
+                        console.error('Error registering:', error);
+                        // Handle errors from server or fetch operation
+                    });
+            }
+        </script>
+    <div class="form-container">
+        <h2 style="text-align: center;">Cadastro</h2>
+        <form id="registrationForm">
+            <label for="username">Nome de Usuário</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required>
+
+            <label style="display: flex; align-items: center;">
+                <input type="checkbox" id="termos_e_condicoes" name="termos_e_condicoes" required>
+                Eu concordo com os
+                <button type="button" class="small-dark-gray-button" onclick="showTerms()">Termos de Uso</button>
+            </label>
+
+            <button class="dark-gray-button" type="button" onclick="submitForm()">Cadastrar</button>
+        </form>
+    </div>
+
+
+    <div id="termsModal" class="w3-modal">
+        <div class="w3-modal-content w3-animate-zoom">
+            <div class="w3-container w3-black w3-display-container">
+                <span onclick="document.getElementById('termsModal').style.display='none'"
+                    class="w3-button w3-display-topright w3-large">x</span>
+                <h2>Termos de Uso</h2>
+            </div>
+            <div class="w3-container" style="text-align: left; padding: 20px;">
+                <p>1. Aceitação dos Termos
+                    Ao acessar e utilizar este site, você concorda em cumprir e estar vinculado aos seguintes termos de
+                    uso. Se você não concordar com algum destes termos, por favor, não use este site.
+
+                    2. Uso do Site
+                    Este site é destinado a fornecer receitas culinárias e informações relacionadas. O conteúdo é para
+                    uso pessoal e não comercial. Você concorda em usar o site de forma responsável e em conformidade com
+                    todas as leis e regulamentos aplicáveis.
+
+                    3. Propriedade Intelectual
+                    Todo o conteúdo do site, incluindo receitas, textos, imagens, gráficos, logotipos e outros
+                    materiais, é protegido por direitos autorais e outras leis de propriedade intelectual. Você não pode
+                    reproduzir, distribuir, modificar ou criar trabalhos derivados de qualquer conteúdo sem a permissão
+                    expressa do proprietário dos direitos autorais.
+
+                    4. Contribuições dos Usuários
+                    Ao enviar qualquer conteúdo para o site, incluindo receitas e comentários, você concede ao site uma
+                    licença não exclusiva, livre de royalties, perpétua e mundial para usar, reproduzir, modificar e
+                    publicar o conteúdo. Você declara que possui todos os direitos necessários sobre o conteúdo enviado
+                    e que ele não viola os direitos de terceiros.
+
+                    5. Isenção de Responsabilidade
+                    As informações e receitas fornecidas neste site são para fins informativos e não garantimos a
+                    precisão, integridade ou utilidade de qualquer conteúdo. O uso das receitas é por sua conta e risco.
+                    Não nos responsabilizamos por quaisquer danos ou prejuízos resultantes do uso do site ou do preparo
+                    das receitas.
+
+                    6. Links para Sites de Terceiros
+                    Este site pode conter links para sites de terceiros. Não temos controle sobre esses sites e não nos
+                    responsabilizamos pelo conteúdo ou práticas de privacidade deles. O acesso a sites de terceiros é
+                    por sua conta e risco.
+
+                    7. Modificações dos Termos
+                    Reservamo-nos o direito de modificar estes termos de uso a qualquer momento. As alterações serão
+                    publicadas nesta página e entrarão em vigor imediatamente. É sua responsabilidade revisar os termos
+                    periodicamente.
+
+                    8. Privacidade
+                    Nos comprometemos a proteger sua privacidade. Consulte nossa Política de Privacidade para obter mais
+                    informações sobre como coletamos, usamos e protegemos suas informações pessoais.
+
+                    9. Contato
+                    Se você tiver qualquer dúvida sobre estes termos de uso, entre em contato conosco através do
+                    enzotoputo@gmail.com.
+
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

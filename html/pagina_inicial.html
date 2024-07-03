@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Receitas</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', Roboto, monospace;
+            background-color: #282c3d;
+            background-position: center;
+            background-size: cover;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #1d1d1d;
+            padding-top: 20px;
+            border-radius: 4px;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            border-radius: 4px;
+            margin: 4px 2px;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+
+        .content {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        .dark-gray-button {
+            background-color: #1d1d1d;
+            /* Cinza escuro */
+            color: white;
+            /* Cor do texto */
+            border: none;
+            /* Remove a borda padrão */
+            padding: 10px 50px;
+            /* Adiciona um pouco de preenchimento */
+            text-align: center;
+            /* Alinha o texto ao centro */
+            text-decoration: none;
+            /* Remove a decoração do texto */
+            display: inline-block;
+            /* Define o elemento como inline-block */
+            font-size: 26px;
+            /* Define o tamanho da fonte */
+            margin: 4px 5px;
+            /* Adiciona uma margem */
+            cursor: pointer;
+            /* Adiciona o cursor pointer */
+            border-radius: 4px;
+            /* Adiciona bordas arredondadas */
+        }
+
+        .dark-gray-button:hover {
+            background-color: #555;
+            /* Muda a cor de fundo para um tom mais claro quando o botão é hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <a href="pagina_inicial.html"><i class="fas fa-home"></i></a>
+        <a href="cadastro.html"
+            onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
+        <a href="login.html" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
+        <a href="javascript:void(0)" id="ButtonSair" style="display: none;">SAIR</a>
+    </div>
+
+    <div class="content">
+        <article>
+            <div class="row" style="position: fixed; left: 45%; top: 40%;">
+                <p><button id="ListaReceitas" class="dark-gray-button"><a href="lista_receitas.html" rel="external"
+                            hreflang="pt" type="text/html" style="text-decoration: none; color: white;">Listar
+                            Receitas</a></button></p>
+            </div>
+            <div class="row" style="position: fixed; left: 45%; top: 50%;">
+                <p><button id="PostarReceitas" class="dark-gray-button"><a href="" rel="external" hreflang="pt"
+                            type="text/html" style="text-decoration: none; color: white;">Postar
+                            Receitas</a></button></p>
+            </div>
+        </article>
+    </div>
+</body>
+
+</html>

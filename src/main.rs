@@ -2,7 +2,7 @@ mod db;
 mod routes;
 mod schema;
 mod utils;
-
+use tower_http::services::ServeDir;
 use crate::routes::answer::answer_question;
 use crate::routes::recipe::get_full_recipe;
 use axum::{
@@ -30,7 +30,7 @@ async fn main() {
     let db_pool = init_db().await;
 
     let app = Router::new()
-        .route("/register", post(register))
+        .route("/api/register", post(register))
         .route("/login", get(sign_in))
         .route(
             "/ingredient",
@@ -60,6 +60,7 @@ async fn main() {
             post(answer_question).layer(axum::middleware::from_fn(require_auth)),
         )
         .route("/answers-for/:id", get(get_answers_by_question_id))
+        .nest_service("/", ServerDir::new("static"))
         .with_state(db_pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
