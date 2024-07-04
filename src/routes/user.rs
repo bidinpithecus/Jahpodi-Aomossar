@@ -114,3 +114,8 @@ pub async fn show_login_page() -> Html<String> {
     let html_content = tokio::fs::read_to_string("static/login.html").await.unwrap();
     Html(html_content)
 }
+
+pub async fn show_recipes_page() -> Html<String> {
+    let html_content = tokio::fs::read_to_string("static/recipes.html").await.unwrap();
+    Html(html_content)
+}

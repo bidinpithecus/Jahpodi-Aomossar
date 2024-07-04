@@ -52,32 +52,33 @@
 
         .dark-gray-button {
             background-color: #1d1d1d;
-            /* Cinza escuro */
             color: white;
-            /* Cor do texto */
             border: none;
-            /* Remove a borda padrão */
             padding: 10px 50px;
-            /* Adiciona um pouco de preenchimento */
             text-align: center;
-            /* Alinha o texto ao centro */
             text-decoration: none;
-            /* Remove a decoração do texto */
             display: inline-block;
-            /* Define o elemento como inline-block */
             font-size: 26px;
-            /* Define o tamanho da fonte */
             margin: 4px 5px;
-            /* Adiciona uma margem */
             cursor: pointer;
-            /* Adiciona o cursor pointer */
             border-radius: 4px;
-            /* Adiciona bordas arredondadas */
         }
 
         .dark-gray-button:hover {
             background-color: #555;
-            /* Muda a cor de fundo para um tom mais claro quando o botão é hover */
+        }
+
+        .user-info {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .user-info h2 {
+            margin: 0;
+        }
+
+        .user-info p {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -85,13 +86,14 @@
 <body>
     <div class="sidebar">
         <a href="/home"><i class="fas fa-home"></i></a>
-        <a href="/register"
-            onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
-        <a href="/login" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
-        <a href="javascript:void(0)" id="ButtonSair" style="display: none;">SAIR</a>
+        <a href="javascript:void(0)" id="ButtonSair">SAIR</a>
     </div>
 
     <div class="content">
+        <div class="user-info" id="user-info">
+            <!-- User info will be dynamically inserted here -->
+        </div>
+
         <article>
             <div class="row" style="position: fixed; left: 45%; top: 40%;">
                 <p><button id="ListaReceitas" class="dark-gray-button"><a href="/recipes" rel="external"
@@ -105,6 +107,33 @@
             </div>
         </article>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch user data
+            fetch('/api/user')
+                .then(response => response.json())
+                .then(user => {
+                    const userInfo = document.getElementById('user-info');
+                    userInfo.innerHTML = `
+                        <h2>Bem-vindo, ${user.username}</h2>
+                        <p>Email: ${user.email}</p>
+                    `;
+                });
+
+            // Logout functionality
+            const logoutButton = document.getElementById('ButtonSair');
+            logoutButton.addEventListener('click', function() {
+                fetch('/api/logout', {
+                    method: 'POST'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

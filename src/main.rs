@@ -10,7 +10,7 @@ use axum::{
 };
 use db::init_db;
 use routes::{
-    answer::get_answers_by_question_id, home::show_home_page, user::{register, show_login_page, show_register_page, sign_in}
+    answer::get_answers_by_question_id, home::{show_home_page, show_home_user_page}, user::{register, show_login_page, show_recipes_page, show_register_page, sign_in}
 };
 use routes::{
     ingredient::{create_ingredient, list_ingredients},
@@ -35,6 +35,10 @@ async fn main() {
         .route("/register", get(show_register_page))
         .route("/api/login", post(sign_in))
         .route("/login", get(show_login_page))
+        .route("/recipes", get(show_recipes_page))
+        .route("/api/recipes", get(list_recipes))
+
+        .route("/home_user", get(show_home_user_page))
         .route(
             "/ingredient",
             post(create_ingredient).layer(axum::middleware::from_fn(require_auth)),
@@ -49,8 +53,7 @@ async fn main() {
             "/recipe",
             post(create_recipe).layer(axum::middleware::from_fn(require_auth)),
         )
-        .route("/recipes", get(list_recipes))
-        .route("/recipe/:id", get(get_recipe))
+        .route("/api/recipe/:id", get(get_recipe))
         .route("/full-recipe/:id", get(get_full_recipe))
         .route("/recipes-from/:id", get(get_recipes_by_user_id))
         .route(

@@ -46,6 +46,7 @@
         .sidebar a:hover {
             background-color: #555;
         }
+
         .dark-gray-button {
             background-color: #1d1d1d;
             /* Cinza escuro */
@@ -111,23 +112,57 @@
 </head>
 
 <body>
+    <script>
+        function submitForm() {
+            const form = document.getElementById('loginForm');
+            const formData = new FormData(form);
+            const errorMessage = document.getElementById('errorMessage');
+
+            const json = {};
+            formData.forEach((value, key) => {
+                json[key] = value;
+            });
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(json),
+            })
+                .then(response => {
+                    if (response.status == 200) {
+                        window.location.href = '/home_user';
+                    } else {
+                        errorMessage.textContent = response.message || 'Erro ao fazer login. Por favor, tente novamente.';
+                        errorMessage.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    errorMessage.textContent = 'Erro ao fazer login. Por favor, tente novamente.';
+                    errorMessage.style.display = 'block';
+                    console.error('Error loggin in:', error);
+                });
+        }
+
+    </script>
     <div class="sidebar">
         <a href="/home"><i class="fas fa-home"></i></a>
-        <a href="/register"
-            onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
+        <a href="/register" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
         <a href="/login" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
         <a href="javascript:void(0)" id="ButtonSair" style="display: none;">SAIR</a>
     </div>
     <div class="form-container">
         <h2 style="text-align: center;">Login</h2>
-        <form action="sistema.js" method="post">
+        <form id="loginForm" action="sistema.js" method="post">
             <label for="email">E-mail</label>
             <input type="email" id="email" name="email" required>
 
             <label for="password">Senha</label>
             <input type="password" id="password" name="password" required>
-
-            <button class="dark-gray-button" type="submit">Fazer Login</button>
+            <div class="centralize">
+                <button class="dark-gray-button" type="button" onclick="submitForm()">Fazer Login</button>
+            </div>
         </form>
     </div>
 </body>
