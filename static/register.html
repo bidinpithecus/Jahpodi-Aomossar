@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: 'Roboto', Roboto, monospace;
+            font-family: 'Courier New', Courier, monospace;
             background-color: #282c3d;
             background-position: center;
             background-size: cover;
@@ -20,6 +20,14 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+        }
+
+        .center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* Adjust this if needed */
         }
 
         .dark-gray-button {
@@ -40,7 +48,8 @@
             background-color: #1d1d1d;
             color: #aaff88;
             border: none;
-            text-align: left;
+            text-align: center;
+            flex: auto;
             text-decoration: none;
             font-size: 20px;
             margin: 0px 0px;
@@ -89,7 +98,10 @@
             background-color: #1d1d1d;
             color: white;
         }
-
+        .centralize {
+            justify-content: center;
+            display: flex;
+        }
         .error-message {
             color: red;
             font-size: 14px;
@@ -122,19 +134,19 @@
                 },
                 body: JSON.stringify(json),
             })
-            .then(response => {
-                if (response.status == 200) {
-                    window.location.href = '/login';
-                } else {
-                    errorMessage.textContent = response.message || 'Erro ao cadastrar. Por favor, tente novamente.';
+                .then(response => {
+                    if (response.status == 200) {
+                        window.location.href = '/login';
+                    } else {
+                        errorMessage.textContent = response.message || 'Erro ao cadastrar. Por favor, tente novamente.';
+                        errorMessage.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    errorMessage.textContent = 'Erro ao cadastrar. Por favor, tente novamente.';
                     errorMessage.style.display = 'block';
-                }
-            })
-            .catch(error => {
-                errorMessage.textContent = 'Erro ao cadastrar. Por favor, tente novamente.';
-                errorMessage.style.display = 'block';
-                console.error('Error registering:', error);
-            });
+                    console.error('Error registering:', error);
+                });
         }
     </script>
     <div class="form-container">
@@ -154,8 +166,9 @@
                 Eu concordo com os
                 <button type="button" class="small-dark-gray-button" onclick="showTerms()">Termos de Uso</button>
             </label>
-
-            <button class="dark-gray-button" type="button" onclick="submitForm()">Cadastrar</button>
+            <div class="centralize">
+                <button class="dark-gray-button" type="button" onclick="submitForm()">Cadastrar</button>
+            </div>
         </form>
         <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
@@ -210,7 +223,7 @@
                     informações sobre como coletamos, usamos e protegemos suas informações pessoais.
 
                     9. Contato
-                    Se você tiver qualquer dúvida sobre estes termos de uso, entre em contato conosco através do
+                    Se você tiver qualquer dúvida sobre estes termos de uso, entre em contato conosco através do email
                     enzotoputo@gmail.com.
 
                 </p>
