@@ -10,8 +10,7 @@ use axum::{
 };
 use db::init_db;
 use routes::{
-    answer::get_answers_by_question_id,
-    user::{register, sign_in, show_register_page, show_login_page},
+    answer::get_answers_by_question_id, home::show_home_page, user::{register, show_login_page, show_register_page, sign_in}
 };
 use routes::{
     ingredient::{create_ingredient, list_ingredients},
@@ -30,6 +29,7 @@ async fn main() {
     let db_pool = init_db().await;
 
     let app = Router::new()
+        .route("/", get(show_home_page))
         .route("/api/register", post(register))
         .route("/register", get(show_register_page))
         .route("/api/login", post(sign_in))
@@ -70,7 +70,7 @@ async fn main() {
                 .allow_headers(Any),
         );
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
