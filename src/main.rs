@@ -30,6 +30,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(show_home_page))
+        .route("/home", get(show_home_page))
         .route("/api/register", post(register))
         .route("/register", get(show_register_page))
         .route("/api/login", post(sign_in))
