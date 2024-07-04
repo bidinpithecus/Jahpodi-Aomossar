@@ -11,7 +11,6 @@ use axum::{
     response::Json,
 };
 use deadpool_diesel::postgres::Pool;
-use diesel::associations::HasTable;
 use diesel::prelude::*;
 use crate::db::ingredient::{Ingredient, IngredientWithQuantity};
 use crate::db::rating::{FullRating, Rating};

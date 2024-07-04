@@ -4,7 +4,7 @@ use diesel::prelude::*;
 use crate::db::ingredient::IngredientWithQuantity;
 use crate::db::ingredient_for_recipes::NewRecipeIngredientWithoutRecipeId;
 use crate::db::question::FullQuestion;
-use crate::db::rating::{FullRating, Rating};
+use crate::db::rating::FullRating;
 use crate::db::user::User;
 
 #[derive(serde::Serialize, Selectable, Queryable)]

@@ -2,7 +2,6 @@ mod db;
 mod routes;
 mod schema;
 mod utils;
-use tower_http::services::ServeDir;
 use crate::routes::answer::answer_question;
 use crate::routes::recipe::get_full_recipe;
 use axum::{
@@ -12,7 +11,7 @@ use axum::{
 use db::init_db;
 use routes::{
     answer::get_answers_by_question_id,
-    user::{register, sign_in},
+    user::{register, sign_in, show_register_page, show_login_page},
 };
 use routes::{
     ingredient::{create_ingredient, list_ingredients},
@@ -24,6 +23,7 @@ use routes::{
 };
 use routes::{protected_routes::require_auth, question::get_questions_by_recipe_id};
 use std::net::SocketAddr;
+use tower_http::cors::{CorsLayer, Any};
 
 #[tokio::main]
 async fn main() {
@@ -31,7 +31,9 @@ async fn main() {
 
     let app = Router::new()
         .route("/api/register", post(register))
-        .route("/login", get(sign_in))
+        .route("/register", get(show_register_page))
+        .route("/api/login", post(sign_in))
+        .route("/login", get(show_login_page))
         .route(
             "/ingredient",
             post(create_ingredient).layer(axum::middleware::from_fn(require_auth)),
@@ -60,8 +62,13 @@ async fn main() {
             post(answer_question).layer(axum::middleware::from_fn(require_auth)),
         )
         .route("/answers-for/:id", get(get_answers_by_question_id))
-        .nest_service("/", ServerDir::new("static"))
-        .with_state(db_pool);
+        .with_state(db_pool)
+        .layer(
+            CorsLayer::new()
+                .allow_origin(Any)
+                .allow_methods(Any)
+                .allow_headers(Any),
+        );
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();

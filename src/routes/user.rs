@@ -2,6 +2,7 @@ use super::protected_routes::Claims;
 use crate::db::user::{AuthUser, NewUser, RegularUser, User};
 use crate::schema::{regular_user, user};
 use crate::utils::internal_error;
+use axum::response::Html;
 use axum::{extract::State, http::StatusCode, response::Json};
 use bcrypt::{hash, verify};
 use deadpool_diesel::postgres::Pool;
@@ -47,6 +48,11 @@ pub async fn register(
 
 
     Ok(Json(reg_user.id))
+}
+
+pub async fn show_register_page() -> Html<String> {
+    let html_content = tokio::fs::read_to_string("static/register.html").await.unwrap();
+    Html(html_content)
 }
 
 pub async fn sign_in(
@@ -102,4 +108,9 @@ pub async fn sign_in(
     })?;
 
     Ok(Json(token))
+}
+
+pub async fn show_login_page() -> Html<String> {
+    let html_content = tokio::fs::read_to_string("static/login.html").await.unwrap();
+    Html(html_content)
 }

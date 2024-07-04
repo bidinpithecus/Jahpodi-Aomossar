@@ -24,60 +24,36 @@
 
         .dark-gray-button {
             background-color: #1d1d1d;
-            /* Cinza escuro */
             color: white;
-            /* Cor do texto */
             border: none;
-            /* Remove a borda padrão */
             padding: 10px 50px;
-            /* Adiciona um pouco de preenchimento */
             text-align: center;
-            /* Alinha o texto ao centro */
             text-decoration: none;
-            /* Remove a decoração do texto */
             display: inline-block;
-            /* Define o elemento como inline-block */
             font-size: 26px;
-            /* Define o tamanho da fonte */
             margin: 4px 5px;
-            /* Adiciona uma margem */
             cursor: pointer;
-            /* Adiciona o cursor pointer */
             border-radius: 4px;
-            /* Adiciona bordas arredondadas */
         }
 
         .small-dark-gray-button {
             background-color: #1d1d1d;
-            /* Cinza escuro */
             color: #aaff88;
-            /* Cor do texto */
             border: none;
-            /* Remove a borda padrão */
-            /* Adiciona um pouco de preenchimento */
             text-align: left;
-            /* Alinha o texto ao centro */
             text-decoration: none;
-            /* Remove a decoração do texto */
-            /* Define o elemento como inline-block */
             font-size: 20px;
-            /* Define o tamanho da fonte */
             margin: 0px 0px;
-            /* Adiciona uma margem */
             cursor: pointer;
-            /* Adiciona o cursor pointer */
             border-radius: 4px;
-            /* Adiciona bordas arredondadas */
         }
 
         .small-dark-gray-button:hover {
             background-color: #555;
-            /* Muda a cor de fundo para um tom mais claro quando o botão é hover */
         }
 
         .dark-gray-button:hover {
             background-color: #555;
-            /* Muda a cor de fundo para um tom mais claro quando o botão é hover */
         }
 
         .form-container {
@@ -103,58 +79,64 @@
             font-size: 18px;
             display: flex;
             align-items: center;
-            /* Alinha verticalmente com o texto */
         }
 
         .form-container button {
             margin-left: 5px;
-            /* Adiciona um espaço à esquerda do botão */
         }
 
         .w3-modal-content {
             background-color: #1d1d1d;
             color: white;
         }
-        </style>
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
-        <script>
-            function showTerms() {
-                document.getElementById('termsModal').style.display = 'block';
-            }
-    
-            function submitForm() {
-                // Get form data
-                const form = document.getElementById('registrationForm');
-                const formData = new FormData(form);
-    
-                // Convert FormData to JSON object
-                const json = {};
-                formData.forEach((value, key) => {
-                    json[key] = value;
-                });
-    
-                // Send JSON data to the server
-                fetch('localhost:3000/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(json),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle response from server if needed
-                        console.log('Registration successful:', data);
-                        // Optionally redirect or show a success message
-                    })
-                    .catch(error => {
-                        console.error('Error registering:', error);
-                        // Handle errors from server or fetch operation
-                    });
-            }
-        </script>
+    <script>
+        function showTerms() {
+            document.getElementById('termsModal').style.display = 'block';
+        }
+
+        function submitForm() {
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+            const errorMessage = document.getElementById('errorMessage');
+
+            const json = {};
+            formData.forEach((value, key) => {
+                json[key] = value;
+            });
+
+            fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(json),
+            })
+            .then(response => {
+                if (response.status == 200) {
+                    window.location.href = '/login';
+                } else {
+                    errorMessage.textContent = response.message || 'Erro ao cadastrar. Por favor, tente novamente.';
+                    errorMessage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'Erro ao cadastrar. Por favor, tente novamente.';
+                errorMessage.style.display = 'block';
+                console.error('Error registering:', error);
+            });
+        }
+    </script>
     <div class="form-container">
         <h2 style="text-align: center;">Cadastro</h2>
         <form id="registrationForm">
@@ -175,8 +157,8 @@
 
             <button class="dark-gray-button" type="button" onclick="submitForm()">Cadastrar</button>
         </form>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
-
 
     <div id="termsModal" class="w3-modal">
         <div class="w3-modal-content w3-animate-zoom">
