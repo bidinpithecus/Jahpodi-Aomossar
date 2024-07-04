@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <html lang="pt-br">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43,12 +42,14 @@
 
         .sidebar a:hover {
             background-color: #555;
+            cursor: pointer;
         }
 
         .content {
             margin-left: 220px;
             padding: 20px;
             color: white;
+            flex: 1;
         }
 
         .recipe-details {
@@ -64,43 +65,132 @@
         .recipe-details p {
             font-size: 18px;
         }
+
+        .sidebar p {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            border-radius: 4px;
+            margin: 4px 2px;
+        }
+
+        .add-question-button {
+            display: none;
+            background-color: #1d1d1d;
+            color: white;
+            border: none;
+            padding: 10px 50px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 26px;
+            margin: 4px 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .add-question-button:hover {
+            background-color: #555;
+        }
     </style>
 </head>
-
 <body>
-    <div class="sidebar">
-        <a href="/home"><i class="fas fa-home"></i></a>
-        <a href="/register" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
-        <a href="/login" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
-        <a href="javascript:void(0)" id="ButtonSair" style="display: none;">SAIR</a>
-    </div>
-
-    <div class="content">
-        <div class="recipe-details" id="recipe-details">
-            <!-- Recipe details will be dynamically inserted here -->
-        </div>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const recipeId = urlParams.get('id');
+            const user_id = localStorage.getItem('user_id');
+            const username = localStorage.getItem('username');
+            const linkRegister = document.getElementById('register-button');
+            const linkLogin = document.getElementById('login-button');
+            const sidebar = document.getElementById('sidebar');
 
-            fetch(`/api/recipe/${recipeId}`)
-                .then(response => response.json())
-                .then(recipe => {
-                    const details = document.getElementById('recipe-details');
-                    details.innerHTML = `
-                        <h1>${recipe.title}</h1>
-                        <p>${recipe.description}</p>
-                        <p><strong>Data de Criação:</strong> ${new Date(recipe.creation_date).toLocaleString()}</p>
-                        <p><strong>Modo de Preparo:</strong></p>
-                        <p>${recipe.directions}</p>
-                    `;
+            if (user_id) {
+                const greetings = document.createElement("p");
+                greetings.innerHTML = "Olá, " + "<b>" + username + "</b>";
+                sidebar.appendChild(greetings);
+
+                const leaveButton = document.createElement("a");
+                leaveButton.id = "leaveButton";
+                leaveButton.textContent = "SAIR";
+                sidebar.appendChild(leaveButton);
+
+                linkRegister.style.display = 'none';
+                linkLogin.style.display = 'none';
+                leaveButton.style.display = 'block';
+                leaveButton.addEventListener('click', function() {
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('username');
+                    window.location.href = '/home';
                 });
+
+                const addQuestionButton = document.createElement("button");
+                addQuestionButton.className = "add-question-button";
+                addQuestionButton.textContent = "Adicionar Pergunta";
+                document.querySelector('.content').appendChild(addQuestionButton);
+
+                const addRatingButton = document.createElement("button");
+                addRatingButton.className = "add-question-button";
+                addRatingButton.textContent = "Avaliar receita";
+                document.querySelector('.content').appendChild(addRatingButton);
+
+                const path = window.location.pathname;
+                const recipeId = path.split('/').pop();
+
+                fetch(`/api/full-recipe/${recipeId}`)
+                    .then(response => response.json())
+                    .then(recipe => {
+                        const details = document.getElementById('recipe-details');
+                        details.innerHTML = `
+                            <h1>${recipe.title}</h1>
+                            <p><strong>Autor:</strong> ${recipe.author.username}</p>
+                            <p><strong>Descrição:</strong> ${recipe.description}</p>
+                            <p><strong>Data de Criação:</strong> ${new Date(recipe.creation_date).toLocaleString()}</p>
+                            <p><strong>Modo de Preparo:</strong></p>
+                            <p>${recipe.directions}</p>
+                            <p><strong>Ingredientes:</strong></p>
+                            <ul>
+                                ${recipe.ingredients.map(ingredient => `<li>${ingredient.name}: ${ingredient.quantity}</li>`).join('')}
+                            </ul>
+                            <p><strong>Questões:</strong></p>
+                            <ul>
+                                ${recipe.questions.map(question => `<li>${question.text} - por ${question.author.username}</li>`).join('')}
+                            </ul>
+                            <p><strong>Avaliações:</strong></p>
+                            <ul>
+                                ${recipe.ratings.map(rating => `<li>${rating.rating} estrelas - ${rating.comment}</li>`).join('')}
+                            </ul>
+                        `;
+
+                        if (user_id !== recipe.author.id.toString()) {
+                            addQuestionButton.style.display = 'block';
+                            addQuestionButton.addEventListener('click', function() {
+                                alert('A ser implementado');
+                            });
+                            addRatingButton.style.display = 'block';
+                            addRatingButton.addEventListener('click', function() {
+                                alert('A ser implementado');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching recipe:', error);
+                        alert('Erro ao carregar a receita.');
+                    });
+            } else {
+                linkRegister.style.display = 'block';
+                linkLogin.style.display = 'block';
+            }
         });
     </script>
+    <div class="sidebar" id="sidebar">
+        <a href="/home" id="home-button"><i class="fas fa-home"></i></a>
+        <a href="/register" id="register-button" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
+        <a href="/login" id="login-button" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
+    </div>
+    <div class="content">
+        <div class="recipe-details" id="recipe-details">
+        </div>
+    </div>
 </body>
-
 </html>
-

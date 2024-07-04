@@ -131,12 +131,17 @@
                 body: JSON.stringify(json),
             })
                 .then(response => {
-                    if (response.status == 200) {
-                        window.location.href = '/home_user';
+                    if (response.ok) {
+                        return response.json();
                     } else {
                         errorMessage.textContent = response.message || 'Erro ao fazer login. Por favor, tente novamente.';
                         errorMessage.style.display = 'block';
                     }
+                })
+                .then(data => {
+                    localStorage.setItem('user_id', data.id);
+                    localStorage.setItem('username', data.username);
+                    window.location.href = '/home';
                 })
                 .catch(error => {
                     errorMessage.textContent = 'Erro ao fazer login. Por favor, tente novamente.';
@@ -144,17 +149,47 @@
                     console.error('Error loggin in:', error);
                 });
         }
-
     </script>
-    <div class="sidebar">
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user_id = localStorage.getItem('user_id');
+            const username = localStorage.getItem('username');
+            const linkRegister = document.getElementById('register-button');
+            const linkLogin = document.getElementById('login-button');
+            const linkLogout = document.getElementById('ButtonSair');
+            const sidebar = document.getElementById('sidebar');
+    
+            if (user_id) {
+                const greetings = document.createElement("p");
+                greetings.textContent = username;
+                sidebar.appendChild(greetings);
+                
+                linkRegister.style.display = 'none';
+                linkLogin.style.display = 'none';
+                linkLogout.style.display = 'block';
+                linkLogout.addEventListener('click', function() {
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('username');
+                    window.location.href = '/home';
+                });
+            } else {
+                linkRegister.style.display = 'block';
+                linkLogin.style.display = 'block';
+                linkLogout.style.display = 'none';
+            }
+        });
+    </script>
+
+    <div class="sidebar" id="sidebar">
         <a href="/home"><i class="fas fa-home"></i></a>
-        <a href="/register" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
-        <a href="/login" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
+        <a href="/register" id="register-button" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
+        <a href="/login" id="login-button" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
         <a href="javascript:void(0)" id="ButtonSair" style="display: none;">SAIR</a>
     </div>
     <div class="form-container">
         <h2 style="text-align: center;">Login</h2>
-        <form id="loginForm" action="sistema.js" method="post">
+        <form id="loginForm" method="post">
             <label for="email">E-mail</label>
             <input type="email" id="email" name="email" required>
 
@@ -164,6 +199,7 @@
                 <button class="dark-gray-button" type="button" onclick="submitForm()">Fazer Login</button>
             </div>
         </form>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
 </body>
 

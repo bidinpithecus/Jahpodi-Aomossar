@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Receitas</title>
+    
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
@@ -43,6 +44,7 @@
 
         .sidebar a:hover {
             background-color: #555;
+            cursor: pointer;
         }
 
         .content {
@@ -72,25 +74,62 @@
             cursor: pointer;
             /* Adiciona o cursor pointer */
             border-radius: 4px;
-            /* Adiciona bordas arredondadas */
         }
 
         .dark-gray-button:hover {
             background-color: #555;
-            /* Muda a cor de fundo para um tom mais claro quando o botão é hover */
+        }
+        
+        .sidebar p {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            border-radius: 4px;
+            margin: 4px 2px;
         }
     </style>
 </head>
 
 <body>
-    <div class="sidebar">
-        <a href="/home"><i class="fas fa-home"></i></a>
-        <a href="/register"
-            onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
-        <a href="/login" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
-        <a href="javascript:void(0)" id="ButtonSair" style="display: none;">SAIR</a>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user_id = localStorage.getItem('user_id');
+            const username = localStorage.getItem('username');
+            const linkRegister = document.getElementById('register-button');
+            const linkLogin = document.getElementById('login-button');
+            const sidebar = document.getElementById('sidebar');
 
+            if (user_id) {
+                const greetings = document.createElement("p");
+                greetings.innerHTML = "Olá, " + "<b>" + username + "</b>";
+                sidebar.appendChild(greetings);
+
+                const leaveButton = document.createElement("a");
+                leaveButton.id = "leaveButton";
+                leaveButton.textContent = "SAIR";
+                sidebar.appendChild(leaveButton);
+
+                linkRegister.style.display = 'none';
+                linkLogin.style.display = 'none';
+                leaveButton.style.display = 'block';
+                leaveButton.addEventListener('click', function() {
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('username');
+                    window.location.href = '/home';
+                });
+            } else {
+                linkRegister.style.display = 'block';
+                linkLogin.style.display = 'block';
+            }
+        });
+    </script>
+    <div class="sidebar" id="sidebar">
+        <a href="/home" id="home-button"><i class="fas fa-home"></i></a>
+        <a href="/register" id="register-button" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
+        <a href="/login" id="login-button" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
+    </div>
     <div class="content">
         <article>
             <div class="row" style="position: fixed; left: 45%; top: 40%;">
@@ -99,9 +138,14 @@
                             Receitas</a></button></p>
             </div>
             <div class="row" style="position: fixed; left: 45%; top: 50%;">
-                <p><button id="PostarReceitas" class="dark-gray-button"><a href="" rel="external" hreflang="pt"
+                <p><button id="PostarReceitas" class="dark-gray-button"><a href="/post_recipe" rel="external" hreflang="pt"
                             type="text/html" style="text-decoration: none; color: white;">Postar
                             Receitas</a></button></p>
+            </div>
+            <div class="row" style="position: fixed; left: 43%; top: 60%;">
+                <p><button id="Adicionar Ingrediente" class="dark-gray-button"><a href="/ingredient" rel="external" hreflang="pt"
+                            type="text/html" style="text-decoration: none; color: white;">Adicionar
+                            Ingrediente</a></button></p>
             </div>
         </article>
     </div>

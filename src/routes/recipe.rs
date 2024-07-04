@@ -5,6 +5,7 @@ use crate::db::recipe::{FullRecipe, NewRecipe, NewRecipeWithIngredients, Recipe}
 use crate::db::user::User;
 use crate::schema::{rating, answer, ingredient, question, recipe, recipe_ingredient, user};
 use crate::utils::internal_error;
+use axum::response::Html;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -19,6 +20,8 @@ pub async fn create_recipe(
     State(pool): State<Pool>,
     Json(new_recipe_with_ingredients): Json<NewRecipeWithIngredients>,
 ) -> Result<Json<Recipe>, (StatusCode, String)> {
+
+    println!("{:?}", new_recipe_with_ingredients);
 
     if new_recipe_with_ingredients.ingredients.is_empty() {
         return Err((StatusCode::UNAUTHORIZED, "List of ingredients must not be empty".to_string()));
@@ -171,6 +174,16 @@ pub async fn get_recipe(
         .map_err(|_| (StatusCode::NOT_FOUND, "Recipe not found".to_string()))?;
 
     Ok(Json(user))
+}
+
+pub async fn show_post_recipe_page() -> Html<String> {
+    let html_content = tokio::fs::read_to_string("static/post_recipe.html").await.unwrap();
+    Html(html_content)
+}
+
+pub async fn show_recipe_page() -> Html<String> {
+    let html_content = tokio::fs::read_to_string("static/recipe.html").await.unwrap();
+    Html(html_content)
 }
 
 pub async fn get_full_recipe(

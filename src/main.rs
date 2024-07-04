@@ -10,17 +10,17 @@ use axum::{
 };
 use db::init_db;
 use routes::{
-    answer::get_answers_by_question_id, home::{show_home_page, show_home_user_page}, user::{register, show_login_page, show_recipes_page, show_register_page, sign_in}
+    answer::get_answers_by_question_id, home::show_home_page, recipe::{create_recipe, show_recipe_page}, user::{register, show_login_page, show_recipes_page, show_register_page, sign_in}
 };
 use routes::{
     ingredient::{create_ingredient, list_ingredients},
-    recipe::{create_recipe, get_recipe, get_recipes_by_user_id, list_recipes},
+    recipe::{show_post_recipe_page, get_recipe, get_recipes_by_user_id, list_recipes},
 };
 use routes::{
-    ingredient_request::{create_ingredient_request, list_ingredient_requests},
+    ingredient_request::{show_ingredient_page, create_ingredient_request, list_ingredient_requests},
     question::ask_question,
 };
-use routes::{protected_routes::require_auth, question::get_questions_by_recipe_id};
+use routes::question::get_questions_by_recipe_id;
 use std::net::SocketAddr;
 use tower_http::cors::{CorsLayer, Any};
 
@@ -37,33 +37,34 @@ async fn main() {
         .route("/login", get(show_login_page))
         .route("/recipes", get(show_recipes_page))
         .route("/api/recipes", get(list_recipes))
-
-        .route("/home_user", get(show_home_user_page))
+        .route("/post_recipe", get(show_post_recipe_page))
         .route(
-            "/ingredient",
-            post(create_ingredient).layer(axum::middleware::from_fn(require_auth)),
+            "/api/ingredient",
+            post(create_ingredient),
         )
-        .route("/ingredients", get(list_ingredients))
+        .route("/api/ingredients", get(list_ingredients))
         .route(
             "/ingredient-request",
-            post(create_ingredient_request).layer(axum::middleware::from_fn(require_auth)),
+            post(create_ingredient_request),
         )
         .route("/ingredient-requests", get(list_ingredient_requests))
+        .route("/ingredient", get(show_ingredient_page))
         .route(
-            "/recipe",
-            post(create_recipe).layer(axum::middleware::from_fn(require_auth)),
+            "/api/recipe",
+            post(create_recipe),
         )
         .route("/api/recipe/:id", get(get_recipe))
-        .route("/full-recipe/:id", get(get_full_recipe))
+        .route("/recipe/:id", get(show_recipe_page))
+        .route("/api/full-recipe/:id", get(get_full_recipe))
         .route("/recipes-from/:id", get(get_recipes_by_user_id))
         .route(
             "/question",
-            post(ask_question).layer(axum::middleware::from_fn(require_auth)),
+            post(ask_question),
         )
         .route("/questions", get(get_questions_by_recipe_id))
         .route(
             "/answer",
-            post(answer_question).layer(axum::middleware::from_fn(require_auth)),
+            post(answer_question),
         )
         .route("/answers-for/:id", get(get_answers_by_question_id))
         .with_state(db_pool)

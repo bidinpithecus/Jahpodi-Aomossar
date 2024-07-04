@@ -29,6 +29,7 @@ pub struct NewRecipe {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug)]
 pub struct NewRecipeWithIngredients {
     pub title: String,
     pub description: String,

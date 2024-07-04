@@ -1,10 +1,11 @@
 use crate::db::ingredient_request::{IngredientRequest, NewIngredientRequest};
 use crate::schema::ingredient_request;
 use crate::utils::internal_error;
+
 use axum::{
     extract::State,
     http::StatusCode,
-    response::Json,
+    response::{Json, Html},
 };
 use deadpool_diesel::postgres::Pool;
 use diesel::prelude::*;
@@ -37,4 +38,9 @@ pub async fn list_ingredient_requests(
         .map_err(internal_error)?
         .map_err(internal_error)?;
     Ok(Json(res))
+}
+
+pub async fn show_ingredient_page() -> Html<String> {
+    let html_content = tokio::fs::read_to_string("static/ingredient.html").await.unwrap();
+    Html(html_content)
 }

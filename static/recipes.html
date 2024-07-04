@@ -43,6 +43,7 @@
 
         .sidebar a:hover {
             background-color: #555;
+            cursor: pointer;
         }
 
         .content {
@@ -65,40 +66,85 @@
         .recipe-list a {
             color: white;
             text-decoration: none;
+            text-align: center;
             font-size: 18px;
         }
 
         .recipe-list a:hover {
             text-decoration: underline;
         }
+
+        .dark-gray-button:hover {
+            background-color: #555;
+        }
+        
+        .sidebar p {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            border-radius: 4px;
+            margin: 4px 2px;
+        }
     </style>
 </head>
 
 <body>
-    <div class="sidebar">
-        <a href="/home"><i class="fas fa-home"></i></a>
-        <a href="/register" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
-        <a href="/login" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
-        <a href="javascript:void(0)" id="ButtonSair" style="display: none;">SAIR</a>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user_id = localStorage.getItem('user_id');
+            const username = localStorage.getItem('username');
+            const linkRegister = document.getElementById('register-button');
+            const linkLogin = document.getElementById('login-button');
+            const sidebar = document.getElementById('sidebar');
+
+            if (user_id) {
+                const greetings = document.createElement("p");
+                greetings.innerHTML = "Olá, " + "<b>" + username + "</b>";
+                sidebar.appendChild(greetings);
+
+                const leaveButton = document.createElement("a");
+                leaveButton.id = "leaveButton";
+                leaveButton.textContent = "SAIR";
+                sidebar.appendChild(leaveButton);
+
+                linkRegister.style.display = 'none';
+                linkLogin.style.display = 'none';
+                leaveButton.style.display = 'block';
+                leaveButton.addEventListener('click', function() {
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('username');
+                    window.location.href = '/home';
+                });
+            } else {
+                linkRegister.style.display = 'block';
+                linkLogin.style.display = 'block';
+            }
+        });
+    </script>
+    <div class="sidebar" id="sidebar">
+        <a href="/home" id="home-button"><i class="fas fa-home"></i></a>
+        <a href="/register" id="register-button" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
+        <a href="/login" id="login-button" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
     </div>
 
     <div class="content">
         <h1 style="color: white;">Lista de Receitas</h1>
         <ul class="recipe-list" id="recipe-list">
-            <!-- Recipes will be dynamically inserted here -->
         </ul>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('/api/list_recipes')
+            fetch('/api/recipes')
                 .then(response => response.json())
                 .then(data => {
                     const recipeList = document.getElementById('recipe-list');
                     data.forEach(recipe => {
                         const li = document.createElement('li');
                         const a = document.createElement('a');
-                        a.href = `/recipe.html?id=${recipe.id}`;
+                        a.href = `/recipe/${recipe.id}`;
                         a.textContent = recipe.title;
                         li.appendChild(a);
                         recipeList.appendChild(li);

@@ -11,6 +11,7 @@ pub struct NewRecipeIngredient {
 }
 
 #[derive(serde::Deserialize, serde::Serialize, Insertable)]
+#[derive(Debug)]
 #[diesel(table_name = recipe_ingredient)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewRecipeIngredientWithoutRecipeId {

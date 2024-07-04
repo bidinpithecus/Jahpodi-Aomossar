@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Adicionar Ingrediente</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #282c3d;
+            background-position: center;
+            background-size: cover;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #1d1d1d;
+            padding-top: 20px;
+            border-radius: 4px;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            border-radius: 4px;
+            margin: 4px 2px;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-left: 220px;
+            padding: 20px;
+            color: white;
+            width: 100%;
+        }
+
+        .form-container {
+            background-color: #1d1d1d;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .form-container h1 {
+            margin-top: 0;
+        }
+
+        .form-container label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            background-color: #333;
+            color: white;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #555;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .form-container button:hover {
+            background-color: #444;
+        }
+        .sidebar p {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            border-radius: 4px;
+            margin: 4px 2px;
+        }
+    </style>
+</head>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const user_id = localStorage.getItem('user_id');
+        const username = localStorage.getItem('username');
+        const linkRegister = document.getElementById('register-button');
+        const linkLogin = document.getElementById('login-button');
+        const sidebar = document.getElementById('sidebar');
+
+        if (user_id) {
+            const greetings = document.createElement("p");
+            greetings.innerHTML = "Olá, " + "<b>" + username + "</b>";
+            sidebar.appendChild(greetings);
+
+            const leaveButton = document.createElement("a");
+            leaveButton.id = "leaveButton";
+            leaveButton.textContent = "SAIR";
+            sidebar.appendChild(leaveButton);
+
+            linkRegister.style.display = 'none';
+            linkLogin.style.display = 'none';
+            leaveButton.style.display = 'block';
+            leaveButton.addEventListener('click', function() {
+                localStorage.removeItem('user_id');
+                localStorage.removeItem('username');
+                window.location.href = '/home';
+            });
+        } else {
+            linkRegister.style.display = 'block';
+            linkLogin.style.display = 'block';
+        }
+    });
+</script>
+<div class="sidebar" id="sidebar">
+    <a href="/home" id="home-button"><i class="fas fa-home"></i></a>
+    <a href="/register" id="register-button" onclick="document.getElementById('menu-cadastro').style.display='block'">CADASTRO</a>
+    <a href="/login" id="login-button" onclick="document.getElementById('menu-login').style.display='block'">LOGIN</a>
+</div>
+
+    <div class="content">
+        <div class="form-container">
+            <h1>Adicionar Ingrediente</h1>
+            <form id="ingredient-form">
+                <label for="name">Nome do Ingrediente</label>
+                <input type="text" id="name" name="name" required>
+                <button type="submit">Adicionar Ingrediente</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ingredient-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const ingredientData = {
+                name: formData.get('name')
+            };
+
+            fetch('/api/ingredient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ingredientData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Ingrediente adicionado com sucesso!');
+                this.reset(); // Reset the form
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao adicionar o ingrediente.');
+            });
+        });
+    </script>
+</body>
+
+</html>
