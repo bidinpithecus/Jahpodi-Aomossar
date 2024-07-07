@@ -266,7 +266,7 @@
             })
             .then(data => {
                 alert('Receita enviada com sucesso!');
-                window.location.href = `/recipe/id=${data.id}`;
+                window.location.href = `/recipe/${data.id}`;
             })
             .catch(error => {
                 console.error('Erro:', error);
